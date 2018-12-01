@@ -1,0 +1,9 @@
+OddsHistory -> https://www.teamrankings.com/ncf/odds-history/results/?season-filter=since_2007 2007 to present (11/30/2018)
+Game info -> https://api.collegefootballdata.com/api/docs/?url=/api-docs.json#/games/getGames
+polls -> http://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings
+json beautifier -> https://beautifier.io/
+
+lines? -> https://github.com/zaneddennis/CFB-Analytics/blob/master/lineData.py
+rankings -> massey url "https://www.masseyratings.com/cf/arch/compare" + str(year) + "-" + str(week) + ".htm"
+
+statistics -> https://www.teamrankings.com/college-football/stat/average-scoring-margin?date=2018-11-06

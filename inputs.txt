@@ -1,0 +1,18 @@
+home/away
+rank
+talent
+offensive ranking
+defensive ranking
+attendance
+max qbr
+
+
+last game:
+    home/away
+    opponent rank
+    opponent talent
+    opponent offensive ranking
+    opponent  defensive ranking
+    attendance
+    opponent max qbr
+    scoring margin
