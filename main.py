@@ -6,7 +6,9 @@ import os
 from collections import defaultdict
 from game_data import Game
 import _pickle as pickle
+import neat
 
+config_file = "neat.ini"
 GAME_DATA_PATH = "data/game_data.pkl"
 def retreive_all_dates(games):
     dates_to_games= defaultdict(list)
@@ -37,7 +39,19 @@ def combine_game_data(dates_to_games, ap_polls, coaches_polls):
                 input_data.append(single_game_data)
     return input_data
 
+def eval_genomes(genomes, config):
+    for genome_id, genome in genomes:
+        genome.fitness = 0
+
+
 def train_net(game_data):
+    all_inputs = [tuple(game.inputs.values()) for game in game_data]
+    all_outputs = [game.output for game in game_data]
+    config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
+                         neat.DefaultSpeciesSet, neat.DefaultStagnation,
+                         config_file)
+
+    print(game_data)
     return True
 
 def main():
