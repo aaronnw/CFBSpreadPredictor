@@ -1,12 +1,10 @@
 import requests
 from global_config import statistics
 from global_config import STAT_PATH
+from global_config import resolve_team_name
 import os
 import json
-import _pickle as pickle
-from collections import defaultdict
 from bs4 import BeautifulSoup, NavigableString
-import sys
 
 def teams_in_games(games):
     teams = set()
@@ -35,6 +33,7 @@ def update_stats(stats, statistic, date, teams):
             home = entries[11].contents[0]
             away = entries[13].contents[0]
             last_year = entries[15].contents[0]
+            team = resolve_team_name(team)
             if team in teams:
                 stats[team +","+ date] = [rank, value, last_1, last_3, home, away, last_year]
     return stats
