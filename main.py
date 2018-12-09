@@ -57,6 +57,17 @@ def normalize(gamedata):
         game.inputs.pop("week")
     return gamedata
 
+def save(game_data):
+    os.makedirs(os.path.dirname(GAME_DATA_PATH), exist_ok=True)
+    frozen_data = []
+    for game in game_data:
+        frozen = jsonpickle.encode(game, max_depth=2)
+        frozen_data.append(frozen)
+    with open(GAME_DATA_PATH, 'w') as f:
+        out = json.dumps(frozen_data)
+        f.write(out)
+
+
 def create_netdata_from_gamedata(gamedata):
     global all_inputs
     global all_outputs
@@ -64,7 +75,7 @@ def create_netdata_from_gamedata(gamedata):
     all_outputs = [game.output for game in gamedata]
     # all_inputs = [tuple(game.inputs.values()) for game in gamedata]
     stats_to_use = ["average-scoring-margin", "red-zone-scoring-pct", "third-down-conversion-pct", "yards-per-play", "average-team-passer-rating", "yards-per-rush-attempt", "turnover-margin-per-game"]
-    game_stats = ["home-ap-rank-points", "away-ap-rank-points"]
+    game_stats = ["home-ap-rank-points", "away-ap-rank-points", 'home-pred-poll-rank', 'away-pred-poll-rank']
     for stat in stats_to_use:
         game_stats.append("home-" + stat + "-current")
         game_stats.append("away-" + stat + "-current")
@@ -83,16 +94,17 @@ def eval_genomes(genomes, config):
             genome.fitness -= (output - net_output)**2
 
 def train_net():
+    print("Training NEAT network")
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          config_file)
     p = neat.Population(config)
-    # p.add_reporter(neat.StdOutReporter(True))
-    # stats = neat.StatisticsReporter()
-    # p.add_reporter(stats)
-    # p.add_reporter(neat.Checkpointer(5))
+    p.add_reporter(neat.StdOutReporter(True))
+    stats = neat.StatisticsReporter()
+    p.add_reporter(stats)
+    p.add_reporter(neat.Checkpointer(5))
 
-    winner = p.run(eval_genomes, 10000)
+    winner = p.run(eval_genomes, 100)
 
     with open("winner.pkl", 'wb') as f:
         pickle.dump(winner, f)
@@ -107,14 +119,13 @@ def train_net():
         print("input {!r}, expected output {!r}, got {!r}".format(input, output, net_output))
     return True
 
-#TODO fix serialization -- recursion errors
 def main():
     if os.path.isfile(GAME_DATA_PATH) and os.access(GAME_DATA_PATH, os.R_OK):
-        with open(GAME_DATA_PATH) as file:
-            pickled_game_data = json.load(file)
+        with open(GAME_DATA_PATH, 'r') as file:
+            frozen = json.load(file)
             game_data = []
-            for game in pickled_game_data:
-                game_data.append(jsonpickle.decode(game))
+            for item in frozen:
+                game_data.append(jsonpickle.decode(item))
     else:
         os.makedirs("data", exist_ok=True)
         games = games_query.query()
@@ -123,13 +134,7 @@ def main():
         ap_polls, coaches_polls, pred_polls = polls_query.query(dates_to_games)
         stats_query.query(dates_to_games)
         game_data = combine_game_data(dates_to_games, ap_polls, coaches_polls, pred_polls)
-        os.makedirs(os.path.dirname(GAME_DATA_PATH), exist_ok=True)
-        frozen_data = []
-        for game in game_data:
-            frozen_game = jsonpickle.encode(game)
-            frozen_data.append(frozen_game)
-        with open(GAME_DATA_PATH, 'w') as f:
-            json.dump(frozen_data, f)
+        save(game_data)
     game_data = game_data[:1000]
     create_netdata_from_gamedata(game_data)
     train_net()

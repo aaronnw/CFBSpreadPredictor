@@ -22,7 +22,7 @@ def get_predpoll_rank_points(poll, team, date):
 def get_predpoll_rating(poll, team, date):
     key = team + "," + date
     if key in poll.keys():
-       return poll[key][1]
+       return float(poll[key][1])
     else:
         return 0
 
@@ -65,7 +65,7 @@ def parse_stat_line(stat_list):
     results["away"] = stat_list[5]
     return results
 
-class Game:
+class Game(object):
     #If everything checks out, this stays true
     valid : bool
     #Inputs to net
