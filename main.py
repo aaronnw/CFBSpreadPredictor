@@ -7,13 +7,11 @@ import os
 import json
 from collections import defaultdict
 from game_data import Game
-import _pickle as pickle
-import neat
+from neat import train_neat
+from conventionalNN import train_conventional
+import random
 
-config_file = "neat.ini"
 GAME_DATA_PATH = "data/game_data.json"
-all_inputs = []
-all_outputs = []
 
 def retreive_all_dates(games):
     dates_to_games= defaultdict(list)
@@ -69,13 +67,11 @@ def save(game_data):
 
 
 def create_netdata_from_gamedata(gamedata):
-    global all_inputs
-    global all_outputs
-    gamedata = normalize(gamedata)
+    all_inputs = []
     all_outputs = [game.output for game in gamedata]
     # all_inputs = [tuple(game.inputs.values()) for game in gamedata]
     stats_to_use = ["average-scoring-margin", "red-zone-scoring-pct", "third-down-conversion-pct", "yards-per-play", "average-team-passer-rating", "yards-per-rush-attempt", "turnover-margin-per-game"]
-    game_stats = ["home-ap-rank-points", "away-ap-rank-points", 'home-pred-poll-rank', 'away-pred-poll-rank']
+    game_stats = ["home-ap-rank-points", "away-ap-rank-points", 'home-pred-poll-rating', 'away-pred-poll-rating']
     for stat in stats_to_use:
         game_stats.append("home-" + stat + "-current")
         game_stats.append("away-" + stat + "-current")
@@ -84,40 +80,7 @@ def create_netdata_from_gamedata(gamedata):
         for stat in game_stats:
             game_input.append(game.inputs[stat])
         all_inputs.append(game_input)
-
-def eval_genomes(genomes, config):
-    for genome_id, genome in genomes:
-        genome.fitness = 0
-        net = neat.nn.FeedForwardNetwork.create(genome, config)
-        for input, output in zip(all_inputs, all_outputs):
-            net_output = float(net.activate(input)[0]*200 - 100)
-            genome.fitness -= (output - net_output)**2
-
-def train_net():
-    print("Training NEAT network")
-    config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
-                         neat.DefaultSpeciesSet, neat.DefaultStagnation,
-                         config_file)
-    p = neat.Population(config)
-    p.add_reporter(neat.StdOutReporter(True))
-    stats = neat.StatisticsReporter()
-    p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(5))
-
-    winner = p.run(eval_genomes, 100)
-
-    with open("winner.pkl", 'wb') as f:
-        pickle.dump(winner, f)
-
-    print('\nBest genome:\n{!s}'.format(winner))
-
-    # Show output of the most fit genome against training data.
-    print('\nOutput:')
-    winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
-    for input, output in zip(all_inputs, all_outputs):
-        net_output = winner_net.activate(input)[0]*200 - 100
-        print("input {!r}, expected output {!r}, got {!r}".format(input, output, net_output))
-    return True
+    return all_inputs, all_outputs
 
 def main():
     if os.path.isfile(GAME_DATA_PATH) and os.access(GAME_DATA_PATH, os.R_OK):
@@ -134,10 +97,14 @@ def main():
         ap_polls, coaches_polls, pred_polls = polls_query.query(dates_to_games)
         stats_query.query(dates_to_games)
         game_data = combine_game_data(dates_to_games, ap_polls, coaches_polls, pred_polls)
+        game_data = normalize(game_data)
         save(game_data)
-    game_data = game_data[:1000]
-    create_netdata_from_gamedata(game_data)
-    train_net()
+    #game_data = game_data[:1000]
+    #train_neat(all_inputs, all_outputs)
+    for test in range(10):
+        test_set = [random.choice(game_data) for x in range(1000)]
+        all_inputs, all_outputs = create_netdata_from_gamedata(test_set)
+        train_conventional(all_inputs, all_outputs)
 
 if __name__ == '__main__':
     main()

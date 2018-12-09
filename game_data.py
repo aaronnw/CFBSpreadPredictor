@@ -1,5 +1,6 @@
 from global_config import statistics
 from global_config import STAT_PATH
+from stats_query import year_from_date
 import  os
 import json
 
@@ -90,8 +91,9 @@ class Game(object):
         self.inputs['away-pred-poll-rank'] = get_predpoll_rank_points(pred_polls, away_team, date)
         self.inputs['away-pred-poll-rating'] = get_predpoll_rating(pred_polls, away_team, date)
         for stat in statistics:
+            year = year_from_date(date)
             #Load the statistic from a file
-            stat_file = STAT_PATH + stat + ".json"
+            stat_file = STAT_PATH + stat + year + ".json"
             if os.path.isfile(stat_file) and os.access(stat_file, os.R_OK):
                 with open(stat_file) as file:
                     stats = json.load(file)
