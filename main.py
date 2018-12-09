@@ -10,6 +10,8 @@ from game_data import Game
 from neat import train_neat
 from conventionalNN import train_conventional
 import random
+import math
+import numpy as np
 
 GAME_DATA_PATH = "data/game_data.json"
 
@@ -46,10 +48,12 @@ def normalize(gamedata):
     keys = gamedata[0].inputs.keys()
     for key in keys:
         stats = [game.inputs[key] for game in gamedata]
-        max_stat = max(stats)
-        min_stat = min(stats)
+        stat_mean = np.mean(stats)
+        stat_std = np.std(stats)
+        # max_stat = max(stats)
+        # min_stat = min(stats)
         for game in gamedata:
-            game.inputs[key] = (game.inputs[key] - min_stat) / (max_stat-min_stat)
+            game.inputs[key] = (game.inputs[key] - stat_mean) / stat_std
     for game in gamedata:
         # decided to cut the week data
         game.inputs.pop("week")
@@ -100,11 +104,14 @@ def main():
         game_data = normalize(game_data)
         save(game_data)
     #game_data = game_data[:1000]
-    #train_neat(all_inputs, all_outputs)
+    all_inputs, all_outputs = create_netdata_from_gamedata(game_data)
     for test in range(10):
-        test_set = [random.choice(game_data) for x in range(1000)]
-        all_inputs, all_outputs = create_netdata_from_gamedata(test_set)
         train_conventional(all_inputs, all_outputs)
+    #train_neat(all_inputs, all_outputs)
+    # for test in range(10):
+    #     test_set = [random.choice(game_data) for x in range(1000)]
+    #     all_inputs, all_outputs = create_netdata_from_gamedata(test_set)
+    #     train_conventional(all_inputs, all_outputs)
 
 if __name__ == '__main__':
     main()

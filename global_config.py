@@ -1,4 +1,4 @@
-year_range = (2007, 2017)
+year_range = (2016, 2017)
 #Teams usually play 12 regular season games + one bye week + one week for rescheduled regular season games
 #week_num = 14
 week_num = 14
@@ -102,7 +102,7 @@ def resolve_team_name(team):
         new_name = "UMass"
     elif team == "Bowling Grn":
         new_name = "Bowling Green"
-    elif team == "TX - San Ant":
+    elif team == "TX-San Ant":
         new_name = "UT San Antonio"
     elif team == "GA Southern":
         new_name = "Georgia Southern"

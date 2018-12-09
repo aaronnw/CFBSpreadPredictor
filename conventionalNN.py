@@ -1,21 +1,27 @@
 from sklearn.neural_network import MLPRegressor
-import numpy as np
 
 def train_net(net, name, inputs, outputs):
     net.fit(inputs, outputs)
     correct = 0
     incorrect = 0
     sum_dist = 0
+    spread_covered = 0
+    spread_not_covered = 0
     prediction = net.predict(inputs)
     for prediction, output in zip(prediction, outputs):
         #print(name + " | Prediction: " + str(prediction) + "| Actual: " + str(output))
         sum_dist += abs(prediction - output)
+        if output > prediction:
+            spread_covered += 1
+        else:
+            spread_not_covered += 1
         if output * prediction > 0:
             correct += 1
         else:
             incorrect += 1
     print(name + " | Average points off: " + str(sum_dist / len(inputs)))
     print(name + " | Accuracy: " + str(correct / (correct + incorrect)))
+    print(name + " | Spread coverage percentage: " + str(spread_covered / (spread_covered + spread_not_covered)))
 
 
 def train_conventional(inputs, outputs):
