@@ -33,7 +33,7 @@ def train_neat(inputs, outputs):
         p.add_reporter(neat.StdOutReporter(True))
         stats = neat.StatisticsReporter()
         p.add_reporter(stats)
-        p.add_reporter(neat.Checkpointer(20))
+        # p.add_reporter(neat.Checkpointer(20))
 
         winner = p.run(eval_genomes, 1000)
 
@@ -47,12 +47,19 @@ def train_neat(inputs, outputs):
     winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
     correct = 0
     incorrect = 0
+    spread_covered = 0
+    spread_not_covered = 0
     for input, output in zip(all_inputs, all_outputs):
         net_output = winner_net.activate(input)[0]*200 - 100
-        print("Actual: {!r} | Predicted: {!r}".format(output, net_output))
+        if output > net_output:
+            spread_covered += 1
+        else:
+            spread_not_covered += 1
+        # print("Actual: {!r} | Predicted: {!r}".format(output, net_output))
         if output * net_output > 0:
             correct += 1
         else:
             incorrect += 1
-    print("Accuracy: " + str(correct/(correct+incorrect)))
+    print("NEAT Accuracy: " + str(correct/(correct+incorrect)))
+    print("NEAT Spread coverage percentage: " + str(spread_covered / (spread_covered + spread_not_covered)))
     return True

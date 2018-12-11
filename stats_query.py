@@ -1,14 +1,14 @@
 import requests
+from global_config import year_from_date
 from global_config import statistics
 from global_config import STAT_PATH
 from global_config import resolve_team_name
 from global_config import years
+from global_config import file_access
 import os
 import json
 from bs4 import BeautifulSoup, NavigableString
 
-def year_from_date(date):
-    return str(date.split('-')[0])
 
 def teams_in_games(games):
     teams = set()
@@ -46,16 +46,16 @@ def stat_files_exist():
     for statistic in statistics:
         for year in years:
             stat_file = STAT_PATH+ statistic + str(year) + ".json"
-            if not (os.path.isfile(stat_file) and os.access(stat_file, os.R_OK)):
+            if not file_access(stat_file):
                 return False
     return True
 
-def query(dates_to_games):
-    if stat_files_exist():
-        return
-    else:
-        for statistic in statistics:
-            for year in years:
+def query(dates_to_games, append = False):
+    for statistic in statistics:
+        game_years = set([year_from_date(date) for date in dates_to_games.keys()])
+        for year in game_years:
+            stat_file = STAT_PATH + statistic + str(year) + ".json"
+            if append == True or not file_access(stat_file):
                 stats = {}
                 games_in_year = [(date, dates_to_games[date]) for date in dates_to_games.keys() if year_from_date(date) == str(year)]
                 for date, games in games_in_year:
@@ -64,5 +64,5 @@ def query(dates_to_games):
 
                 stat_file = STAT_PATH + statistic + str(year) +".json"
                 os.makedirs(os.path.dirname(stat_file), exist_ok=True)
-                with open(stat_file, 'w') as f:
+                with open(stat_file, 'w+') as f:
                     json.dump(stats, f)

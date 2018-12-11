@@ -1,4 +1,7 @@
+import os
+
 year_range = (2016, 2017)
+test_year = 2018
 #Teams usually play 12 regular season games + one bye week + one week for rescheduled regular season games
 #week_num = 14
 week_num = 14
@@ -9,6 +12,13 @@ statistics = ['average-scoring-margin', 'red-zone-scoring-pct', 'yards-per-play'
               'opponent-yards-per-play', 'opponent-third-down-conversion-pct', 'opponent-average-team-passer-rating',
               'opponent-yards-per-rush-attempt', 'turnover-margin-per-game', 'penalties-per-game']
 STAT_PATH = "data/stats/"
+
+def file_access(path):
+    return os.path.isfile(path) and os.access(path, os.R_OK)
+
+
+def year_from_date(date):
+    return str(date.split('-')[0])
 
 # Convert the name used on teamrankings.com to match our other data
 def resolve_team_name(team):

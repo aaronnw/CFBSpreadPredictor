@@ -7,13 +7,15 @@ import os
 import json
 from collections import defaultdict
 from game_data import Game
-from neat import train_neat
+from global_config import file_access
+from neatNN import train_neat
 from conventionalNN import train_conventional
 import random
 import math
 import numpy as np
 
 GAME_DATA_PATH = "data/game_data.json"
+TEST_GAME_DATA_PATH = "data/test_game_data.json"
 
 def retreive_all_dates(games):
     dates_to_games= defaultdict(list)
@@ -59,16 +61,23 @@ def normalize(gamedata):
         game.inputs.pop("week")
     return gamedata
 
-def save(game_data):
-    os.makedirs(os.path.dirname(GAME_DATA_PATH), exist_ok=True)
+def save(data, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     frozen_data = []
-    for game in game_data:
+    for game in data:
         frozen = jsonpickle.encode(game, max_depth=2)
         frozen_data.append(frozen)
-    with open(GAME_DATA_PATH, 'w') as f:
+    with open(path, 'w') as f:
         out = json.dumps(frozen_data)
         f.write(out)
 
+def load(path):
+    with open(path, 'r') as file:
+        frozen = json.load(file)
+        game_data = []
+        for item in frozen:
+            game_data.append(jsonpickle.decode(item))
+    return game_data
 
 def create_netdata_from_gamedata(gamedata):
     all_inputs = []
@@ -84,34 +93,46 @@ def create_netdata_from_gamedata(gamedata):
         for stat in game_stats:
             game_input.append(game.inputs[stat])
         all_inputs.append(game_input)
+    all_inputs = [[float(x) for x in l] for l in all_inputs]
+    all_outputs = [float(x) for x in all_outputs]
     return all_inputs, all_outputs
 
 def main():
-    if os.path.isfile(GAME_DATA_PATH) and os.access(GAME_DATA_PATH, os.R_OK):
-        with open(GAME_DATA_PATH, 'r') as file:
-            frozen = json.load(file)
-            game_data = []
-            for item in frozen:
-                game_data.append(jsonpickle.decode(item))
+    if file_access(GAME_DATA_PATH) and file_access(TEST_GAME_DATA_PATH):
+        game_data = load(GAME_DATA_PATH)
+        test_game_data = load(TEST_GAME_DATA_PATH)
     else:
         os.makedirs("data", exist_ok=True)
-        games = games_query.query()
+        games, test_games = games_query.query()
         # talent = talent_query.query()
         dates_to_games = retreive_all_dates(games)
         ap_polls, coaches_polls, pred_polls = polls_query.query(dates_to_games)
         stats_query.query(dates_to_games)
         game_data = combine_game_data(dates_to_games, ap_polls, coaches_polls, pred_polls)
         game_data = normalize(game_data)
-        save(game_data)
+        save(game_data, GAME_DATA_PATH)
+
+        dates_to_games = retreive_all_dates(test_games)
+        ap_polls, coaches_polls, pred_polls = polls_query.query(dates_to_games, append = True)
+        stats_query.query(dates_to_games, append = True)
+        test_game_data = combine_game_data(dates_to_games, ap_polls, coaches_polls, pred_polls)
+        test_game_data = normalize(test_game_data)
+        save(test_game_data, TEST_GAME_DATA_PATH)
+
     #game_data = game_data[:1000]
     all_inputs, all_outputs = create_netdata_from_gamedata(game_data)
-    for test in range(10):
-        train_conventional(all_inputs, all_outputs)
+    test_inputs, test_outputs = create_netdata_from_gamedata(test_game_data)
     #train_neat(all_inputs, all_outputs)
-    # for test in range(10):
-    #     test_set = [random.choice(game_data) for x in range(1000)]
-    #     all_inputs, all_outputs = create_netdata_from_gamedata(test_set)
-    #     train_conventional(all_inputs, all_outputs)
+    results = defaultdict(list)
+    for test in range(10):
+        results = train_conventional(results, all_inputs, all_outputs, test_inputs, test_outputs)
+
+    for net_name, net_results in results.items():
+        print(net_name)
+        for i in range(len(net_results[0])):
+            avg_val = np.mean([entry[i] for entry in net_results])
+            print(avg_val)
+        print("\n")
 
 if __name__ == '__main__':
     main()

@@ -1,8 +1,9 @@
 import requests
 import json
-from global_config import years
+from global_config import year_from_date
 from global_config import weeks
 from global_config import resolve_team_name
+from global_config import file_access
 from stats_query import teams_in_games
 from bs4 import BeautifulSoup, NavigableString
 import os
@@ -10,9 +11,6 @@ import os
 PATH_AP_JSON = 'data/ap_poll.json'
 PATH_COACHES_JSON = 'data/coaches_poll.json'
 PATH_ALL_JSON = 'data/predictive_poll.json'
-
-def file_access(path):
-    return os.path.isfile(path) and os.access(path, os.R_OK)
 
 def update_pred_polls(pred_polls, date, teams):
     url = "https://www.teamrankings.com/college-football/ranking/predictive-by-other?date=" + date
@@ -32,8 +30,8 @@ def update_pred_polls(pred_polls, date, teams):
                 pred_polls[team + "," + date] = [rank, value]
     return pred_polls
 
-def query(dates_to_games):
-    if file_access(PATH_AP_JSON) and file_access(PATH_COACHES_JSON) and file_access(PATH_ALL_JSON):
+def query(dates_to_games, append=False):
+    if append == False and file_access(PATH_AP_JSON) and file_access(PATH_COACHES_JSON) and file_access(PATH_ALL_JSON):
         with open(PATH_AP_JSON) as file:
             ap_polls = json.load(file)
         with open(PATH_COACHES_JSON) as file:
@@ -45,7 +43,8 @@ def query(dates_to_games):
     ap_polls = {}
     coaches_polls = {}
     pred_polls = {}
-    for year in years:
+    game_years = set([year_from_date(date) for date in dates_to_games.keys()])
+    for year in game_years:
         for week in weeks:
             headers = {
                 'accept': 'application/json',
@@ -79,13 +78,18 @@ def query(dates_to_games):
         teams = teams_in_games(games)
         pred_polls = update_pred_polls(pred_polls, date, teams)
 
-    with open(PATH_AP_JSON, 'w') as f:
+    if append:
+        write = "w+"
+    else:
+        write = "w"
+
+    with open(PATH_AP_JSON, write) as f:
         json.dump(ap_polls, f)
 
-    with open(PATH_COACHES_JSON, 'w') as f:
+    with open(PATH_COACHES_JSON, write) as f:
         json.dump(coaches_polls, f)
 
-    with open(PATH_ALL_JSON, 'w') as f:
+    with open(PATH_ALL_JSON, write) as f:
         json.dump(pred_polls, f)
 
     return ap_polls, coaches_polls, pred_polls
