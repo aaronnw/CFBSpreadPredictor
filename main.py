@@ -1,17 +1,11 @@
-import games_query
-import polls_query
-import stats_query
-import talent_query
+from queries import games_query, polls_query, stats_query
 import jsonpickle
 import os
 import json
 from collections import defaultdict
 from game_data import Game
 from global_config import file_access
-from neatNN import train_neat
-from conventionalNN import train_conventional
-import random
-import math
+from models.conventionalNN import train_conventional
 import numpy as np
 
 GAME_DATA_PATH = "data/game_data.json"

@@ -4,7 +4,7 @@ from global_config import years
 from global_config import weeks
 import os
 
-PATH_JSON = 'data/talent.json'
+PATH_JSON = '../data/talent.json'
 
 def query():
     if os.path.isfile(PATH_JSON) and os.access(PATH_JSON, os.R_OK):

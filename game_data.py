@@ -1,6 +1,6 @@
 from global_config import statistics
 from global_config import STAT_PATH
-from stats_query import year_from_date
+from queries.stats_query import year_from_date
 import  os
 import json
 

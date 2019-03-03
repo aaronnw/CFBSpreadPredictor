@@ -5,8 +5,9 @@ from global_config import test_year
 from global_config import weeks
 from global_config import file_access
 
-GAME_RESULTS_PATH = 'data/game_results.json'
-TEST_GAMES_PATH = 'data/test_games.json'
+
+GAME_RESULTS_PATH = '../data/game_results.json'
+TEST_GAMES_PATH = '../data/test_games.json'
 
 def query():
     if file_access(GAME_RESULTS_PATH) and file_access(TEST_GAMES_PATH):
