@@ -11,6 +11,7 @@ def get_poll_rank_points(poll, team):
         points = 26 - poll[team]
     return points
 
+
 def get_predpoll_rank_points(poll, team, date):
     key = team + "," + date
     points = 0
@@ -20,6 +21,7 @@ def get_predpoll_rank_points(poll, team, date):
         print(key + "\n")
     return points
 
+
 def get_predpoll_rating(poll, team, date):
     key = team + "," + date
     if key in poll.keys():
@@ -27,27 +29,29 @@ def get_predpoll_rating(poll, team, date):
     else:
         return 0
 
+
 def without_percent(s):
     if '%' not in s:
         return s
     else:
         return s.replace("%", "")
 
+
 def parse_stat_line(stat_list):
     results = {}
     # Comes in the form: Current year | last 3 | last 1 | Home | Away | Last year
 
-    #Remove the rank value for now
+    # Remove the rank value for now
     stat_list = stat_list[1:]
-    #First remove percentage values
+    # First remove percentage values
     stat_list = [without_percent(s) for s in stat_list]
 
-    #If no last year data, start with 0
+    # If no last year data, start with 0
     last_year = stat_list[len(stat_list) - 1]
     if last_year == '--':
         stat_list[len(stat_list)-1] = '0'
 
-    #If no this year data, start with last years
+    # If no this year data, start with last years
     if stat_list[0] == '--':
         stat_list[0] = stat_list[len(stat_list)-1]
 
@@ -55,9 +59,8 @@ def parse_stat_line(stat_list):
         if stat_list[item_index] == '--':
             stat_list[item_index] = stat_list[0]
 
-    #Shouldn't have any blanks yet, so convert to floats
+    # Shouldn't have any blanks yet, so convert to floats
     stat_list = [float(s) for s in stat_list]
-
 
     results["current"] = stat_list[1]
     results["last3"] = stat_list[2]
@@ -66,13 +69,15 @@ def parse_stat_line(stat_list):
     results["away"] = stat_list[5]
     return results
 
+
 class Game(object):
-    #If everything checks out, this stays true
+    # If everything checks out, this stays true
     valid : bool
-    #Inputs to net
+    # Inputs to net
     inputs : {}
-    #Spread for home team
+    # Spread for home team
     output : int
+
     def __init__(self, date, game_info, ap_poll, coaches_poll, pred_polls):
         self.valid = True
         home_team = game_info['home_team']
@@ -92,7 +97,7 @@ class Game(object):
         self.inputs['away-pred-poll-rating'] = get_predpoll_rating(pred_polls, away_team, date)
         for stat in statistics:
             year = year_from_date(date)
-            #Load the statistic from a file
+            # Load the statistic from a file
             stat_file = STAT_PATH + stat + year + ".json"
             if os.path.isfile(stat_file) and os.access(stat_file, os.R_OK):
                 with open(stat_file) as file:

@@ -11,6 +11,7 @@ import numpy as np
 GAME_DATA_PATH = "data/game_data.json"
 TEST_GAME_DATA_PATH = "data/test_game_data.json"
 
+
 def retreive_all_dates(games):
     dates_to_games= defaultdict(list)
     for week in games:
@@ -21,6 +22,7 @@ def retreive_all_dates(games):
             #time = split_object[2].rpartition('.')[0]
             dates_to_games[date].append(game)
     return dates_to_games
+
 
 def combine_game_data(dates_to_games, ap_polls, coaches_polls, pred_polls):
     input_data = []
@@ -40,6 +42,7 @@ def combine_game_data(dates_to_games, ap_polls, coaches_polls, pred_polls):
                 input_data.append(single_game_data)
     return input_data
 
+
 def normalize(gamedata):
     keys = gamedata[0].inputs.keys()
     for key in keys:
@@ -55,6 +58,7 @@ def normalize(gamedata):
         game.inputs.pop("week")
     return gamedata
 
+
 def save(data, path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     frozen_data = []
@@ -65,6 +69,7 @@ def save(data, path):
         out = json.dumps(frozen_data)
         f.write(out)
 
+
 def load(path):
     with open(path, 'r') as file:
         frozen = json.load(file)
@@ -72,6 +77,7 @@ def load(path):
         for item in frozen:
             game_data.append(jsonpickle.decode(item))
     return game_data
+
 
 def create_netdata_from_gamedata(gamedata):
     all_inputs = []
@@ -91,11 +97,14 @@ def create_netdata_from_gamedata(gamedata):
     all_outputs = [float(x) for x in all_outputs]
     return all_inputs, all_outputs
 
+
 def main():
     if file_access(GAME_DATA_PATH) and file_access(TEST_GAME_DATA_PATH):
+        print("Loading existing game data")
         game_data = load(GAME_DATA_PATH)
         test_game_data = load(TEST_GAME_DATA_PATH)
     else:
+        print("Running queries to download game data")
         os.makedirs("data", exist_ok=True)
         games, test_games = games_query.query()
         # talent = talent_query.query()
@@ -113,10 +122,10 @@ def main():
         test_game_data = normalize(test_game_data)
         save(test_game_data, TEST_GAME_DATA_PATH)
 
-    #game_data = game_data[:1000]
+    # game_data = game_data[:1000]
     all_inputs, all_outputs = create_netdata_from_gamedata(game_data)
     test_inputs, test_outputs = create_netdata_from_gamedata(test_game_data)
-    #train_neat(all_inputs, all_outputs)
+    # train_neat(all_inputs, all_outputs)
     results = defaultdict(list)
     for test in range(10):
         results = train_conventional(results, all_inputs, all_outputs, test_inputs, test_outputs)
@@ -127,6 +136,7 @@ def main():
             avg_val = np.mean([entry[i] for entry in net_results])
             print(avg_val)
         print("\n")
+
 
 if __name__ == '__main__':
     main()
