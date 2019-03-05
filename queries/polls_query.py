@@ -7,9 +7,9 @@ from global_config import file_access
 from queries.stats_query import teams_in_games
 from bs4 import BeautifulSoup, NavigableString
 
-PATH_AP_JSON = '../data/ap_poll.json'
-PATH_COACHES_JSON = '../data/coaches_poll.json'
-PATH_ALL_JSON = '../data/predictive_poll.json'
+PATH_AP_JSON = 'data/ap_poll.json'
+PATH_COACHES_JSON = 'data/coaches_poll.json'
+PATH_ALL_JSON = 'data/predictive_poll.json'
 
 def update_pred_polls(pred_polls, date, teams):
     url = "https://www.teamrankings.com/college-football/ranking/predictive-by-other?date=" + date
@@ -50,24 +50,24 @@ def query(dates_to_games, append=False):
             }
 
             params = (
-                ('seasons', str(year)),
-                ('weeks', str(week))
+                ('year', str(year)),
+                ('week', str(week))
             )
-
-            response = requests.get('http://site.api.espn.com/apis/site/v2/sports/football/college-football/rankings', headers=headers, params=params)
-            ap_poll_query = response.json()['rankings'][0]['ranks']
-            coaches_poll_query = response.json()['rankings'][1]['ranks']
+            response = requests.get('https://api.collegefootballdata.com/rankings', headers=headers, params=params)
+            test = response.json()
+            ap_poll_query = response.json()[0]['polls'][1]['ranks']
+            coaches_poll_query = response.json()[0]['polls'][0]['ranks']
             ap_poll = {}
             coaches_poll = {}
 
             for pos in ap_poll_query:
-                team_name = pos['team']['nickname']
-                rank = pos['current']
+                team_name = pos['school']
+                rank = pos['rank']
                 ap_poll[team_name] = rank
 
             for pos in coaches_poll_query:
-                team_name = pos['team']['nickname']
-                rank = pos['current']
+                team_name = pos['school']
+                rank = pos['rank']
                 coaches_poll[team_name] = rank
 
             ap_polls[str(year) + "," + str(week)] = ap_poll
