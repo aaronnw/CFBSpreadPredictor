@@ -30,6 +30,13 @@ def update_pred_polls(pred_polls, date, teams):
     return pred_polls
 
 def query(dates_to_games, append=False):
+    '''
+    Query online historical poll data to build a database of team ranking history
+    :param dates_to_games: dictionary using a date as keys to all games played on that date
+    :param append: Add to exiting data?
+    :return: Three dictionaries: ap_polls, coaches_polls, pred_polls
+    '''
+    # Check if we already have all the poll data
     if append == False and file_access(PATH_AP_JSON) and file_access(PATH_COACHES_JSON) and file_access(PATH_ALL_JSON):
         with open(PATH_AP_JSON) as file:
             ap_polls = json.load(file)
@@ -45,6 +52,7 @@ def query(dates_to_games, append=False):
     game_years = set([year_from_date(date) for date in dates_to_games.keys()])
     for year in game_years:
         for week in weeks:
+            # Query for ap and coaches poll data from api.collegefootballdata.com
             headers = {
                 'accept': 'application/json',
             }
@@ -54,7 +62,6 @@ def query(dates_to_games, append=False):
                 ('week', str(week))
             )
             response = requests.get('https://api.collegefootballdata.com/rankings', headers=headers, params=params)
-            test = response.json()
             ap_poll_query = response.json()[0]['polls'][1]['ranks']
             coaches_poll_query = response.json()[0]['polls'][0]['ranks']
             ap_poll = {}
@@ -70,6 +77,7 @@ def query(dates_to_games, append=False):
                 rank = pos['rank']
                 coaches_poll[team_name] = rank
 
+            # Store the polls for every date a game was played
             ap_polls[str(year) + "," + str(week)] = ap_poll
             coaches_polls[str(year) + "," + str(week)] = coaches_poll
 
