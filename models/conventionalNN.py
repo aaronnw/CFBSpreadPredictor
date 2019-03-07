@@ -4,6 +4,7 @@ from collections import defaultdict
 
 results = defaultdict(list)
 
+
 def eval_net(net, inputs, outputs, name, type):
     print("Evaluating " + type + " data " + name)
     correct = 0
@@ -38,24 +39,24 @@ def eval_net(net, inputs, outputs, name, type):
     return [avg_off, std_off, accuracy, coverage]
 
 
-
 def train_net(net, name, inputs, outputs, test_inputs, test_outputs):
     global results
-    net.fit(inputs, outputs, )
+    net.fit(inputs, outputs)
     training_result = eval_net(net, inputs, outputs, name, "Training")
     test_result = eval_net(net, test_inputs, test_outputs, name, "Test")
     results[name+"-training"].append(training_result)
     results[name+"-test"].append(test_result)
 
-def train_conventional(current_results, inputs, outputs, test_inputs, test_outputs):
+
+def train_conventional(inputs, outputs, test_inputs, test_outputs):
     global results
-    #Config for 2 hidden layers of size of inputs
+    # Config for 2 hidden layers of size of inputs
     layer1_size = int(len(inputs))
     layer2_size = int(len(inputs))
     net_even = MLPRegressor(hidden_layer_sizes = (layer1_size,layer2_size), max_iter=1000, early_stopping=True)
     train_net(net_even, "Even Net", inputs, outputs, test_inputs, test_outputs)
 
-    #Config for 2 hidden layers of size both half of inputs
+    # Config for 2 hidden layers of size both half of inputs
     layer1_size = int(0.5*len(inputs))
     layer2_size = int(0.5*len(inputs))
     net_half = MLPRegressor(hidden_layer_sizes = (layer1_size,layer2_size), max_iter=1000, early_stopping=True)
@@ -67,13 +68,13 @@ def train_conventional(current_results, inputs, outputs, test_inputs, test_outpu
     net_double = MLPRegressor(hidden_layer_sizes=(layer1_size, layer2_size), max_iter=1000, early_stopping=True)
     train_net(net_double, "Double size Net", inputs, outputs, test_inputs, test_outputs)
 
-    #Config for 2 hidden layers, 1st size of inputs, 2nd half of inputs
+    # Config for 2 hidden layers, 1st size of inputs, 2nd half of inputs
     layer1_size = int(len(inputs))
     layer2_size = int(0.5*len(inputs))
     net_funnel = MLPRegressor(hidden_layer_sizes = (layer1_size,layer2_size), max_iter=1000, early_stopping=True)
     train_net(net_funnel, "Funnel Net", inputs, outputs, test_inputs, test_outputs)
 
-    #Config for 2 hidden layers, 1st double size of inputs, 2nd half of inputs
+    # Config for 2 hidden layers, 1st double size of inputs, 2nd half of inputs
     layer1_size = int(2*len(inputs))
     layer2_size = int(0.5*len(inputs))
     net_large_funnel = MLPRegressor(hidden_layer_sizes = (layer1_size,layer2_size), max_iter=1000, early_stopping=True)

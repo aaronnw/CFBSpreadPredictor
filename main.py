@@ -6,6 +6,7 @@ from collections import defaultdict
 from game_data import Game
 from global_config import file_access
 from models.conventionalNN import train_conventional
+from models.tflow import train_net
 import numpy as np
 
 GAME_DATA_PATH = "data/game_data.json"
@@ -121,11 +122,11 @@ def main():
         print("Saving data to", GAME_DATA_PATH)
         save(game_data, GAME_DATA_PATH)
 
-        #Repeat all that for test seasons
+        # Repeat all that for test seasons
         print("Doing that all again for test seasons...")
         dates_to_games = retreive_all_dates(test_games)
-        ap_polls, coaches_polls, pred_polls = polls_query.query(dates_to_games, append = True)
-        stats_query.query(dates_to_games, append = True)
+        ap_polls, coaches_polls, pred_polls = polls_query.query(dates_to_games, append=True)
+        stats_query.query(dates_to_games, append=True)
         test_game_data = combine_game_data(dates_to_games, ap_polls, coaches_polls, pred_polls)
         test_game_data = normalize(test_game_data)
         save(test_game_data, TEST_GAME_DATA_PATH)
@@ -135,9 +136,10 @@ def main():
     test_inputs, test_outputs = create_netdata_from_gamedata(test_game_data)
     # train_neat(all_inputs, all_outputs)
     print("Doing NN stuff...")
-    results = defaultdict(list)
-    for test in range(10):
-        results = train_conventional(results, all_inputs, all_outputs, test_inputs, test_outputs)
+    # results = defaultdict(list)
+    # for test in range(10):
+    #     results = train_conventional(all_inputs, all_outputs, test_inputs, test_outputs)
+    results = train_net(all_inputs, all_outputs, test_inputs, test_outputs)
 
     for net_name, net_results in results.items():
         print(net_name)

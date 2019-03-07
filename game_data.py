@@ -71,12 +71,12 @@ def parse_stat_line(stat_list):
 
 
 class Game(object):
-    # If everything checks out, this stays true
-    valid : bool
-    # Inputs to net
-    inputs : {}
-    # Spread for home team
-    output : int
+    # # If everything checks out, this stays true
+    # valid: bool
+    # # Inputs to net
+    # inputs: {}
+    # # Spread for home team
+    # output : int
 
     def __init__(self, date, game_info, ap_poll, coaches_poll, pred_polls):
         self.valid = True
