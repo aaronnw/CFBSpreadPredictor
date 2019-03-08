@@ -5,6 +5,7 @@ import json
 from collections import defaultdict
 from game_data import Game
 from global_config import file_access
+from global_config import KERAS_MODEL_PATH
 from models.conventionalNN import train_conventional
 from models.tflow import train_net
 import numpy as np
@@ -80,6 +81,26 @@ def load(path):
     return game_data
 
 
+def scikit_net(inputs, outputs, test_inputs, test_outputs):
+    results = defaultdict(list)
+    for test in range(10):
+        results = train_conventional(inputs, outputs, test_inputs, test_outputs)
+    for net_name, net_results in results.items():
+        print(net_name)
+        for i in range(len(net_results[0])):
+            avg_val = np.mean([entry[i] for entry in net_results])
+            print(avg_val)
+        print("\n")
+
+
+def tf_net(inputs, outputs, test_inputs, test_outputs):
+    model, results = train_net(inputs, outputs, test_inputs, test_outputs, load=True)
+    avg_val = np.mean(results)
+    print("Saving model to", KERAS_MODEL_PATH)
+    model.save(KERAS_MODEL_PATH)
+    print(avg_val)
+
+
 def create_netdata_from_gamedata(gamedata):
     all_inputs = []
     all_outputs = [game.output for game in gamedata]
@@ -136,17 +157,11 @@ def main():
     test_inputs, test_outputs = create_netdata_from_gamedata(test_game_data)
     # train_neat(all_inputs, all_outputs)
     print("Doing NN stuff...")
-    # results = defaultdict(list)
-    # for test in range(10):
-    #     results = train_conventional(all_inputs, all_outputs, test_inputs, test_outputs)
-    results = train_net(all_inputs, all_outputs, test_inputs, test_outputs)
 
-    for net_name, net_results in results.items():
-        print(net_name)
-        for i in range(len(net_results[0])):
-            avg_val = np.mean([entry[i] for entry in net_results])
-            print(avg_val)
-        print("\n")
+#   scikit_net(all_inputs, all_outputs, test_inputs, test_outputs)
+
+    tf_net(all_inputs, all_outputs, test_inputs, test_outputs)
+
 
 
 if __name__ == '__main__':

@@ -13,6 +13,8 @@ statistics = ['average-scoring-margin', 'red-zone-scoring-pct', 'yards-per-play'
               'opponent-yards-per-rush-attempt', 'turnover-margin-per-game', 'penalties-per-game']
 STAT_PATH = "data/stats/"
 
+KERAS_MODEL_PATH = "models/keras_model.h5"
+
 
 def file_access(path):
     return os.path.isfile(path) and os.access(path, os.R_OK)
