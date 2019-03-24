@@ -98,7 +98,7 @@ def tf_net(inputs, outputs, test_inputs, test_outputs):
     avg_val = np.mean(results)
     print("Saving model to", KERAS_MODEL_PATH)
     model.save(KERAS_MODEL_PATH)
-    print(avg_val)
+    print("Average off by", avg_val)
 
 
 def create_netdata_from_gamedata(gamedata):
