@@ -7,6 +7,39 @@ from global_config import KERAS_MODEL_PATH
 from global_config import file_access
 
 
+def eval_net(net, inputs, outputs):
+    inputs = np.asarray(inputs)
+    outputs = np.asarray(outputs)
+    correct = 0
+    incorrect = 0
+    spread_covered = 0
+    spread_not_covered = 0
+    prediction = net.predict(inputs)
+    off_amounts = []
+    for prediction, output in zip(prediction, outputs):
+        diff = abs(prediction - output)
+        off_amounts.append(diff)
+        if output > prediction:
+            spread_covered += 1
+        else:
+            spread_not_covered += 1
+        if output * prediction > 0:
+            correct += 1
+        else:
+            incorrect += 1
+
+    avg_off = float(np.mean(off_amounts))
+    std_off = float(np.std(off_amounts))
+    accuracy = float(correct / (correct + incorrect))
+    coverage = float(spread_covered / (spread_covered + spread_not_covered))
+    print("\n")
+    print("On test data:")
+    print("Average points off: " + str(avg_off))
+    print("Std of points off: " + str(std_off))
+    print("Accuracy: " + str(accuracy))
+    print("Spread coverage percentage: " + str(coverage))
+    return [avg_off, std_off, accuracy, coverage]
+
 def create_uniform_model(input_shape, hidden_layers=(50, 50, 10, 10, 1), activation='elu'):
     model = Sequential()
 

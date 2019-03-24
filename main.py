@@ -8,6 +8,7 @@ from global_config import file_access
 from global_config import KERAS_MODEL_PATH
 from models.conventionalNN import train_conventional
 from models.tflow import train_net
+import models.tflow as tflow
 import numpy as np
 
 GAME_DATA_PATH = "data/game_data.json"
@@ -96,6 +97,7 @@ def scikit_net(inputs, outputs, test_inputs, test_outputs):
 def tf_net(inputs, outputs, test_inputs, test_outputs):
     model, results = train_net(inputs, outputs, test_inputs, test_outputs, load=True)
     avg_val = np.mean(results)
+    tflow.eval_net(model, test_inputs, test_outputs)
     print("Saving model to", KERAS_MODEL_PATH)
     model.save(KERAS_MODEL_PATH)
     print("Average off by", avg_val)
@@ -161,6 +163,7 @@ def main():
 #   scikit_net(all_inputs, all_outputs, test_inputs, test_outputs)
 
     tf_net(all_inputs, all_outputs, test_inputs, test_outputs)
+
 
 
 
