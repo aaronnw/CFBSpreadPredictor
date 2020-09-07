@@ -4,7 +4,7 @@ import numpy as np
 from keras.models import Sequential, load_model
 from keras.layers import Dense
 from global_config import KERAS_MODEL_PATH
-from global_config import file_access
+from utils import file_access
 
 
 def eval_net(net, inputs, outputs):

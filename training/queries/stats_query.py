@@ -1,10 +1,9 @@
 import requests
-from global_config import year_from_date
 from global_config import statistics
 from global_config import STAT_PATH
 from global_config import resolve_team_name
 from global_config import years
-from global_config import file_access
+from utils import file_access, year_from_date
 import os
 import json
 from bs4 import BeautifulSoup, NavigableString
@@ -18,6 +17,7 @@ def teams_in_games(games):
         teams.add(home_team)
         teams.add(away_team)
     return teams
+
 
 def update_stats(stats, statistic, date, teams):
     url = "https://www.teamrankings.com/college-football/stat/" + statistic + "?date="+ date
@@ -42,6 +42,7 @@ def update_stats(stats, statistic, date, teams):
                 stats[team +","+ date] = [rank, value, last_1, last_3, home, away, last_year]
     return stats
 
+
 def stat_files_exist():
     for statistic in statistics:
         for year in years:
@@ -49,6 +50,7 @@ def stat_files_exist():
             if not file_access(stat_file):
                 return False
     return True
+
 
 def query(dates_to_games, append = False):
     for statistic in statistics:

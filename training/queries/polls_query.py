@@ -1,10 +1,9 @@
 import requests
 import json
-from global_config import year_from_date
 from global_config import weeks
 from global_config import resolve_team_name
-from global_config import file_access
-from queries.stats_query import teams_in_games
+from utils import file_access, year_from_date
+from training.queries.stats_query import teams_in_games
 from bs4 import BeautifulSoup, NavigableString
 
 PATH_AP_JSON = 'data/ap_poll.json'

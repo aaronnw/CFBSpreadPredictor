@@ -1,5 +1,3 @@
-import os
-
 year_range = (2015, 2015)
 test_year = 2018
 # Teams usually play 12 regular season games + one bye week + one week for rescheduled regular season games
@@ -11,17 +9,12 @@ statistics = ['average-scoring-margin', 'red-zone-scoring-pct', 'yards-per-play'
               'average-team-passer-rating', 'yards-per-rush-attempt', 'opponent-red-zone-scoring-pct',
               'opponent-yards-per-play', 'opponent-third-down-conversion-pct', 'opponent-average-team-passer-rating',
               'opponent-yards-per-rush-attempt', 'turnover-margin-per-game', 'penalties-per-game']
-STAT_PATH = "data/stats/"
 
+
+STAT_PATH = "training/data/stats/"
+GAME_DATA_PATH = "training/data/game_data.json"
+TEST_GAME_DATA_PATH = "training/data/test_g ame_data.json"
 KERAS_MODEL_PATH = "models/keras_model.h5"
-
-
-def file_access(path):
-    return os.path.isfile(path) and os.access(path, os.R_OK)
-
-
-def year_from_date(date):
-    return str(date.split('-')[0])
 
 
 # Convert the name used on teamrankings.com to match our other data
