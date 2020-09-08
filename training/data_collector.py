@@ -3,6 +3,7 @@ from collections import defaultdict
 
 from training.queries import games_query, polls_query, stats_query
 
+
 def retreive_all_dates(games):
     dates_to_games= defaultdict(list)
     for week in games:

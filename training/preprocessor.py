@@ -12,6 +12,21 @@ from global_config import GAME_DATA_PATH, TEST_GAME_DATA_PATH
 from training.queries import games_query
 
 
+def split_datasets(all_data, pct_val, pct_test):
+    np.random.shuffle(all_data)
+
+    # Number of samples in each set
+    testing_num = int(pct_test * len(all_data))
+    validation_num = int(pct_val*len(all_data))
+    training_num = len(all_data)-1-testing_num-validation_num
+
+    training_data = all_data[0:training_num]
+    validation_data = all_data[training_num:training_num + validation_num]
+    testing_data = all_data[training_num + validation_num:]
+
+    return training_data, validation_data, testing_data
+
+
 def create_netdata_from_gamedata(gamedata):
     all_inputs = []
     all_outputs = [game.output for game in gamedata]
@@ -28,7 +43,8 @@ def create_netdata_from_gamedata(gamedata):
         all_inputs.append(game_input)
     all_inputs = [[float(x) for x in l] for l in all_inputs]
     all_outputs = [float(x) for x in all_outputs]
-    return all_inputs, all_outputs
+    return zip(all_inputs, all_outputs)
+
 
 
 def retreive_all_dates(games):
@@ -108,7 +124,6 @@ def prepare_data():
     if file_access(GAME_DATA_PATH) and file_access(TEST_GAME_DATA_PATH):
         print("Loading existing game data")
         game_data = load(GAME_DATA_PATH)
-        test_game_data = load(TEST_GAME_DATA_PATH)
     else:
 
         print("Running queries to download game data...")
@@ -120,13 +135,12 @@ def prepare_data():
         game_data = process_game_data(dates_to_games, polls, stats)
         print("Saving game data to", GAME_DATA_PATH)
         save(game_data, GAME_DATA_PATH)
+        #
+        # dates_to_games, polls, stats = data_collector.collect_data(test_games)
+        # test_game_data = process_game_data(dates_to_games, polls, stats)
+        # print("Saving test game data to", TEST_GAME_DATA_PATH)
+        # save(test_game_data, TEST_GAME_DATA_PATH)
 
-        dates_to_games, polls, stats = data_collector.collect_data(test_games)
-        test_game_data = process_game_data(dates_to_games, polls, stats)
-        print("Saving test game data to", GAME_DATA_PATH)
-        save(test_game_data, TEST_GAME_DATA_PATH)
+    all_data = list(create_netdata_from_gamedata(game_data))
+    return split_datasets(all_data, pct_val=.2, pct_test=.1)
 
-    all_inputs, all_outputs = create_netdata_from_gamedata(game_data)
-    test_inputs, test_outputs = create_netdata_from_gamedata(test_game_data)
-
-    return all_inputs, all_outputs, test_inputs, test_outputs

@@ -92,7 +92,7 @@ class Game(object):
         self.inputs['home-coaches-rank-points'] = get_poll_rank_points(coaches_poll, home_team)
         self.inputs['away-coaches-rank-points'] = get_poll_rank_points(coaches_poll, away_team)
         self.inputs['home-pred-poll-rank'] = get_predpoll_rank_points(pred_polls, home_team, date)
-        self.inputs['home-pred-poll-rating'] =  get_predpoll_rating(pred_polls, home_team, date)
+        self.inputs['home-pred-poll-rating'] = get_predpoll_rating(pred_polls, home_team, date)
         self.inputs['away-pred-poll-rank'] = get_predpoll_rank_points(pred_polls, away_team, date)
         self.inputs['away-pred-poll-rating'] = get_predpoll_rating(pred_polls, away_team, date)
         for stat in statistics:

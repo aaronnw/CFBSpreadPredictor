@@ -1,4 +1,3 @@
-import tensorflow as tf
 import keras
 import numpy as np
 from keras.models import Sequential, load_model

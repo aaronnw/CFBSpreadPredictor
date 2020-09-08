@@ -13,7 +13,7 @@ statistics = ['average-scoring-margin', 'red-zone-scoring-pct', 'yards-per-play'
 
 STAT_PATH = "training/data/stats/"
 GAME_DATA_PATH = "training/data/game_data.json"
-TEST_GAME_DATA_PATH = "training/data/test_g ame_data.json"
+TEST_GAME_DATA_PATH = "training/data/test_game_data.json"
 KERAS_MODEL_PATH = "models/keras_model.h5"
 
 
