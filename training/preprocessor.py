@@ -13,6 +13,7 @@ from training.queries import games_query
 
 
 def split_datasets(all_data, pct_val, pct_test):
+    # in-place shuffle of all the games
     np.random.shuffle(all_data)
 
     # Number of samples in each set
