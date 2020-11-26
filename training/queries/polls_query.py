@@ -10,6 +10,7 @@ PATH_AP_JSON = 'data/ap_poll.json'
 PATH_COACHES_JSON = 'data/coaches_poll.json'
 PATH_ALL_JSON = 'data/predictive_poll.json'
 
+
 def update_pred_polls(pred_polls, date, teams):
     url = "https://www.teamrankings.com/college-football/ranking/predictive-by-other?date=" + date
     page = requests.get(url)
@@ -27,6 +28,7 @@ def update_pred_polls(pred_polls, date, teams):
             if team in teams:
                 pred_polls[team + "," + date] = [rank, value]
     return pred_polls
+
 
 def query(dates_to_games, append=False):
     '''

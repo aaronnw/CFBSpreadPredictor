@@ -18,7 +18,7 @@ def get_predpoll_rank_points(poll, team, date):
     if key in poll.keys():
         points = 130 - float(poll[key][0])
     else:
-        print(key + "\n")
+        print("Team '{team}' not found in predictive poll on date {date}".format(team=key.split(',')[0], date=date))
     return points
 
 

@@ -34,9 +34,11 @@ class Trainer:
 
     def train_model(self, train_data, validation_data, test_data):
         print("Using backend:", self.backend)
+        training_inputs, training_outputs = [x for x in zip(*train_data)]
+        val_inputs, val_outputs = [x for x in zip(*validation_data)]
         if self.backend == "scikit":
-            # scikit_net(all_inputs, all_outputs, test_inputs, test_outputs)
-            print(self.backend)
+            print("Begninning training using", self.backend)
+            train_scikit(training_inputs, training_outputs, val_inputs, val_outputs)
         elif self.backend == "neat":
             # train_neat(all_inputs, all_outputs)
             print(self.backend)

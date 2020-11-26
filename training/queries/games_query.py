@@ -1,9 +1,9 @@
 import requests
-import json
+import os
 from global_config import years
 from global_config import test_year
 from global_config import weeks
-from utils import file_access
+from utils import file_access, save_json, load_json
 
 GAME_RESULTS_PATH = 'data/game_results.json'
 TEST_GAMES_PATH = 'data/test_games.json'
@@ -11,11 +11,7 @@ TEST_GAMES_PATH = 'data/test_games.json'
 
 def query():
     if file_access(GAME_RESULTS_PATH) and file_access(TEST_GAMES_PATH):
-        with open(GAME_RESULTS_PATH) as file:
-            games = json.load(file)
-        with open(TEST_GAMES_PATH) as file:
-            test_games = json.load(file)
-        return games, test_games
+        return load_json(GAME_RESULTS_PATH), load_json(TEST_GAMES_PATH)
 
     games = []
     for year in years:
@@ -51,10 +47,7 @@ def query():
             game = response.json()
             test_games.append(game)
 
-        with open(TEST_GAMES_PATH, 'w') as f:
-            json.dump(test_games, f)
-
-    with open(GAME_RESULTS_PATH, 'w') as f:
-        json.dump(games, f)
+    save_json(test_games, TEST_GAMES_PATH)
+    save_json(games, GAME_RESULTS_PATH)
 
     return games, test_games

@@ -47,9 +47,8 @@ def create_netdata_from_gamedata(gamedata):
     return zip(all_inputs, all_outputs)
 
 
-
 def retreive_all_dates(games):
-    dates_to_games= defaultdict(list)
+    dates_to_games = defaultdict(list)
     for week in games:
         for game in week:
             game_date_object = game['start_date']
@@ -122,13 +121,13 @@ def process_game_data(dates_to_games, polls, stats):
 
 
 def prepare_data():
-    if file_access(GAME_DATA_PATH) and file_access(TEST_GAME_DATA_PATH):
-        print("Loading existing game data")
+    if file_access(GAME_DATA_PATH):
+        print("Loading existing game data from", GAME_DATA_PATH)
         game_data = load(GAME_DATA_PATH)
     else:
 
         print("Running queries to download game data...")
-        os.makedirs("training/data", exist_ok=True)
+        os.makedirs("data", exist_ok=True)
         print("Loading all games in the specified range...")
         games, test_games = games_query.query()
 
@@ -136,7 +135,7 @@ def prepare_data():
         game_data = process_game_data(dates_to_games, polls, stats)
         print("Saving game data to", GAME_DATA_PATH)
         save(game_data, GAME_DATA_PATH)
-        #
+
         # dates_to_games, polls, stats = data_collector.collect_data(test_games)
         # test_game_data = process_game_data(dates_to_games, polls, stats)
         # print("Saving test game data to", TEST_GAME_DATA_PATH)
