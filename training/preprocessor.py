@@ -8,7 +8,7 @@ import numpy as np
 from game_data import Game
 from utils import file_access
 from training import data_collector
-from global_config import GAME_DATA_PATH, TEST_GAME_DATA_PATH
+from global_config import GAME_DATA_PATH
 from training.queries import games_query
 
 
@@ -129,17 +129,12 @@ def prepare_data():
         print("Running queries to download game data...")
         os.makedirs("data", exist_ok=True)
         print("Loading all games in the specified range...")
-        games, test_games = games_query.query()
+        games = games_query.query()
 
         dates_to_games, polls, stats = data_collector.collect_data(games)
         game_data = process_game_data(dates_to_games, polls, stats)
         print("Saving game data to", GAME_DATA_PATH)
         save(game_data, GAME_DATA_PATH)
-
-        # dates_to_games, polls, stats = data_collector.collect_data(test_games)
-        # test_game_data = process_game_data(dates_to_games, polls, stats)
-        # print("Saving test game data to", TEST_GAME_DATA_PATH)
-        # save(test_game_data, TEST_GAME_DATA_PATH)
 
     all_data = list(create_netdata_from_gamedata(game_data))
     return split_datasets(all_data, pct_val=.2, pct_test=.1)

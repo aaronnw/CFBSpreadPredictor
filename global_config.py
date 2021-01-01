@@ -1,5 +1,5 @@
-year_range = (2015, 2015)
-test_year = 2018
+year_range = (2015, 2019)
+
 # Teams usually play 12 regular season games + one bye week + one week for rescheduled regular season games
 # week_num = 14
 week_num = 14
