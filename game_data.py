@@ -1,7 +1,7 @@
 from global_config import statistics
 from global_config import STAT_PATH
 from utils import year_from_date
-import  os
+import os
 import json
 
 
