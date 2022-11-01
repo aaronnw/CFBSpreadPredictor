@@ -17,107 +17,57 @@ TEST_GAME_DATA_PATH = "data/test_game_data.json"
 KERAS_MODEL_PATH = "models/keras_model.h5"
 
 
+team_rankings_dict = {
+    "LA Monroe": "Louisiana Monroe",
+    "Miss State": "Mississippi State",
+    "N Mex State": "New Mexico State",
+    "Oregon St": "Oregon State",
+    "Colorado St": "Colorado State",
+    "Michigan St": "Michigan State",
+    "Miami (FL)":" Miami",
+    "VA Tech": "Virginia Tech",
+    "GA Tech": "Georgia Tech",
+    "Florida Intl": "Florida International",
+    "App State": "Appalachian State",
+    "W Kentucky": "Western Kentucky",
+    "Mississippi": "Ole Miss",
+    "Boston Col": "Boston College",
+    "Wash State": "Washington State",
+    "Fla Atlantic": "Florida Atlantic",
+    "Middle Tenn": "Middle Tennessee",
+    "Central FL": "UCF",
+    "TX Christian": "TCU",
+    "E Michigan": "Eastern Michigan",
+    "W Michigan": "Western Michigan",
+    "N Carolina": "North Carolina",
+    "Oklahoma St": "Oklahoma State",
+    "S Mississippi": "Southern Mississippi",
+    "Arkansas St": "Arkansas State",
+    "Central Mich": "Central Michigan",
+    "LA Tech": "Louisiana Tech",
+    "S Carolina": "South Carolina",
+    "LA Lafayette": "Louisiana",
+    "S Florida": "South Florida",
+    "Kansas St": "Kansas State",
+    "Florida St": "Florida State",
+    "N Illinois": "Northern Illinois",
+    "W Virginia": "West Virginia",
+    "Hawaii": "Hawai'i",
+    "Arizona St": "Arizona State",
+    "Fresno St": "Fresno State",
+    "S Methodist": "SMU",
+    "San Jose St": "San José State",
+    "TX El Paso": "UTEP",
+    "San Diego St": "San Diego State",
+    "U Mass": "UMass",
+    "Bowling Grn": "Bowling Green",
+    "TX-San Ant": "UT San Antonio",
+    "GA Southern": "Georgia Southern",
+    "S Alabama": "South Alabama",
+    "E Carolina": "East Carolina"
+}
+
+
 # Convert the name used on teamrankings.com to match our other data
 def resolve_team_name(team):
-    if team == "LA Monroe":
-        new_name = "Louisiana Monroe"
-    elif team == "Miss State":
-        new_name = "Mississippi State"
-    elif team == "N Mex State":
-        new_name = "New Mexico State"
-    elif team == "Oregon St":
-        new_name = "Oregon State"
-    elif team == "Colorado St":
-        new_name = "Colorado State"
-    elif team == "Michigan St":
-        new_name = "Michigan State"
-    elif team == "Miami (FL)":
-        new_name = "Miami"
-    elif team == "VA Tech":
-        new_name = "Virginia Tech"
-    elif team == "GA Tech":
-        new_name = "Georgia Tech"
-    elif team == "GA Tech":
-        new_name = "Georgia Tech"
-    elif team == "Florida Intl":
-        new_name = "Florida International"
-    elif team == "App State":
-        new_name = "Appalachian State"
-    elif team == "W Kentucky":
-        new_name = "Western Kentucky"
-    elif team == "W Kentucky":
-        new_name = "Western Kentucky"
-    elif team == "Mississippi":
-        new_name = "Ole Miss"
-    elif team == "Boston Col":
-        new_name = "Boston College"
-    elif team == "Wash State":
-        new_name = "Washington State"
-    elif team == "Fla Atlantic":
-        new_name = "Florida Atlantic"
-    elif team == "Middle Tenn":
-        new_name = "Middle Tennessee"
-    elif team == "Central FL":
-        new_name = "UCF"
-    elif team == "TX Christian":
-        new_name = "TCU"
-    elif team == "E Michigan":
-        new_name = "Eastern Michigan"
-    elif team == "W Michigan":
-        new_name = "Western Michigan"
-    elif team == "N Carolina":
-        new_name = "North Carolina"
-    elif team == "Oklahoma St":
-        new_name = "Oklahoma State"
-    elif team == "S Mississippi":
-        new_name = "Southern Mississippi"
-    elif team == "Arkansas St":
-        new_name = "Arkansas State"
-    elif team == "Central Mich":
-        new_name = "Central Michigan"
-    elif team == "LA Tech":
-        new_name = "Louisiana Tech"
-    elif team == "S Carolina":
-        new_name = "South Carolina"
-    elif team == "LA Lafayette":
-        new_name = "Louisiana"
-    elif team == "S Florida":
-        new_name = "South Florida"
-    elif team == "Kansas St":
-        new_name = "Kansas State"
-    elif team == "Florida St":
-        new_name = "Florida State"
-    elif team == "N Illinois":
-        new_name = "Northern Illinois"
-    elif team == "W Virginia":
-        new_name = "West Virginia"
-    elif team == "Hawaii":
-        new_name = "Hawai'i"
-    elif team == "Arizona St":
-        new_name = "Arizona State"
-    elif team == "Fresno St":
-        new_name = "Fresno State"
-    elif team == "S Methodist":
-        new_name = "SMU"
-    elif team == "San Jose St":
-        new_name = "San José State"
-    elif team == "TX El Paso":
-        new_name = "UTEP"
-    elif team == "San Diego St":
-        new_name = "San Diego State"
-    elif team == "U Mass":
-        new_name = "UMass"
-    elif team == "Bowling Grn":
-        new_name = "Bowling Green"
-    elif team == "TX-San Ant":
-        new_name = "UT San Antonio"
-    elif team == "GA Southern":
-        new_name = "Georgia Southern"
-    elif team == "S Alabama":
-        new_name = "South Alabama"
-    elif team == "E Carolina":
-        new_name = "East Carolina"
-
-    else:
-        return team
-    return new_name
+    return team_rankings_dict.get(team, team)
